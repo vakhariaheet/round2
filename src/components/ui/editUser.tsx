@@ -23,6 +23,9 @@ import {
 import useAuth from '../hooks/useAuth';
 import ApiService, { Response } from '../../lib/ApiService';
 import { useToast } from './use-toast';
+import { IUser, setUser } from '../../Redux/Slices/UserSlice';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 const editUserSchema = z.object({
 	username: z.string(),
@@ -34,7 +37,9 @@ const editUserSchema = z.object({
 
 const EditUser = () => {
     const { user } = useAuth();
-    const {toast}   = useToast();
+    const { toast } = useToast();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 	const form = useForm({
 		resolver: zodResolver(editUserSchema),
 		defaultValues: {
@@ -46,19 +51,19 @@ const EditUser = () => {
 	});
 
     const onSubmit = async (values: any) => {
-        const { data } = await ApiService.put<Response<{
-            id:number
-        }>>('users/update/', {
+        const { data } = await ApiService.put<Response<IUser>>('users/update/', {
             ...user,
             ...values,
         }, {
             protected: true,
         });
-        if(data.isSuccess){
+        if (data.isSuccess) {
+            dispatch(setUser(data.data));
             toast({
                 title: 'User Updated',
                 description: `User ${values.username} has been updated`,
             })
+            navigate('/profile');
         }
     };
 
