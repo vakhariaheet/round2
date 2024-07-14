@@ -79,6 +79,22 @@ class ApiService {
 		const res = await axios.delete<Response>(API_URL + url, config);
 		return res;
 	}
+	static async patch<Response>(
+		url: string,
+		data: any,
+		config?: AxiosRequestConfig & { protected?: boolean },
+	) {
+		if (config?.protected) {
+			const res = getAxiosAuthInstance().patch<Response>(
+				API_URL + url,
+				data,
+				config,
+			);
+			return res;
+		}
+		const res = await axios.patch<Response>(API_URL + url, data, config);
+		return res;
+	}
 }
 
 export const getSearch = (searchParams:URLSearchParams) => {

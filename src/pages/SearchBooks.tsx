@@ -1,13 +1,21 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom"
 import SearchBar from "../components/ui/SearchBar";
-import { getSearch } from "../lib/ApiService";
+import ApiService, { getSearch, Response } from "../lib/ApiService";
 import { IGoogleBooksResponse } from "src/lib/googleTypes";
 import axios from "axios";
 import BookCard, { Book } from "../components/ui/BookCard";
 
+export interface IBookDetail {
+    id: string;
+    isbn: string;
+    count: number;
+    arriving_date: string;
+
+}
+
 const SearchBook = () => {
-    const [ searchParams, setSearchParams ] = useSearchParams();
+    const [ searchParams ] = useSearchParams();
     const [results , setResults] = useState<Book[]>([]);
     const search = getSearch(searchParams) || '';
 
@@ -20,8 +28,23 @@ const SearchBook = () => {
             const isbn = data.data.items.map((book) => {
                 return book.volumeInfo.industryIdentifiers?.[0].identifier;
             });
-            console.log(isbn);
-            const books: Book[] = data.data.items.map((book) => {
+            const backendBooks: {
+                [isbn: string]: IBookDetail
+            } = {};
+            const backendBookInfo = await ApiService.post<Response<IBookDetail[]>>('books/details/', {
+                books_isbn: isbn
+            });
+           
+            if(backendBookInfo.data.data.length >0)
+                backendBookInfo.data.data?.forEach((book) => {
+                console.log(book);
+                backendBooks[book.isbn] = book;
+            });
+
+            console.log(backendBooks);
+           
+            const books: Book[] = data.data.items.filter(v => v.volumeInfo.industryIdentifiers?.[ 0 ].identifier).map((book) => {
+                
                 return {
                     title: book.volumeInfo.title,
                     description: book.volumeInfo.description || '',
@@ -29,6 +52,9 @@ const SearchBook = () => {
                     publishedDate: book.volumeInfo.publishedDate,
                     categories: book.volumeInfo.categories,
                     thumbnail: book.volumeInfo.imageLinks?.thumbnail,
+                    isbn: book.volumeInfo.industryIdentifiers?.[ 0 ].identifier || '',
+                    count: backendBooks[ book.volumeInfo.industryIdentifiers?.[ 0 ].identifier || '' ]?.count || 0,
+                    arriving_date: backendBooks[ book.volumeInfo.industryIdentifiers?.[ 0 ].identifier || '' ]?.arriving_date || '',
                 }
             });
             return books;
@@ -38,11 +64,11 @@ const SearchBook = () => {
     },[search.q])
     return (
         <div>
-            <SearchBar path={'/search'} />
+            <SearchBar onClick={() => {}} />
             <div className="flex mt-5 flex-wrap gap-4 justify-center">
                 {
                     results.map((book) => (
-                        <BookCard book={book} />
+                        <BookCard isMyProfile={false} book={book} />
                     ))
                 } 
             </div>

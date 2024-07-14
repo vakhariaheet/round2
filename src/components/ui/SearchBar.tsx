@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Input } from './input';
 import { Button } from './button';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import {  useSearchParams } from 'react-router-dom';
 
 
 
@@ -14,19 +14,19 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 // ];
 
 
-const SearchBar = ({path}) => {
+const SearchBar = ({onClick}) => {
 	
     const [ searchParams, setSearchParams ] = useSearchParams();
     const [ q, setQ ] = useState(searchParams.get('q') || '');
-    const navigate = useNavigate();
 	return (
 		<div className='flex justify-center'>
 			<div className='flex w-[80%]   items-center space-x-2'>
 				<Input type='Search Book' placeholder='Search' value={q} onChange={(e) => setQ(e.target.value)} />
                 <Button
                     onClick={() => {
-                        navigate(`${path}?q=${q}`);
+                        
                         setSearchParams({ q });
+                        onClick && onClick(q);
                     }}
                 >Search</Button>
             </div>

@@ -5,6 +5,7 @@ export interface IUser {
     email: string;
     phone: string;
     role: string;
+    address:string;
     token:string
 }
 
@@ -14,6 +15,7 @@ const initialState: IUser = {
     email: "",
     phone: "",
     role: "",
+    address:"",
     token:""
 };
 
