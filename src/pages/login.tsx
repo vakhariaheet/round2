@@ -12,7 +12,7 @@ import { Input } from '../components/ui/input';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '../components/ui/button';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import useAuth from '../components/hooks/useAuth';
 
 const loginSchema = z
@@ -24,6 +24,8 @@ const loginSchema = z
 
 
 const Login = () => {
+	const navigate = useNavigate();
+
 	const form = useForm<z.infer<typeof loginSchema>>({
 		resolver: zodResolver(loginSchema),
 		defaultValues: {
@@ -34,8 +36,8 @@ const Login = () => {
 	});
 	const authHook = useAuth();
 	const onSubmit = async (values: z.infer<typeof loginSchema>) => {
-		const data = await authHook.login(values.username, values.password);
-		console.log(data);
+		await authHook.login(values.username, values.password);
+		navigate('/');
 	}
 	return (
 		<div className='flex justify-center flex-col  items-center min-h-screen h-full'>

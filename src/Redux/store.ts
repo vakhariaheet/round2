@@ -12,11 +12,12 @@ const reducers = combineReducers({
 const persistConfig = {
     key: 'root',
     storage,
-    blacklist: [],
 }
 
 const persistedReducer = persistReducer(persistConfig, reducers);
 
 export default configureStore({
     reducer: persistedReducer,
+    devTools: true,
+    
 });

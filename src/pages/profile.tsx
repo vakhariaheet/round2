@@ -1,6 +1,25 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import Avatar from 'boring-avatars';
 
-const Profile: React.FC = () => {
+interface UserProfileProps {
+  userId: string;
+  userName: string;
+  userRole: string;
+  userEmail: string;
+}
+
+const Profile: React.FC<UserProfileProps> = ({ userId, userName, userRole, userEmail }) => {
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearch = () => {
+    // Handle search logic
+    console.log(`Searching for: ${searchQuery}`);
+  };
+
+  useEffect(() => {
+    // Perform any initialization logic if needed
+  }, []);
+
   return (
     <div className="max-w-6xl mx-auto p-4 font-sans">
       <header className="flex justify-between items-center mb-6">
@@ -12,14 +31,20 @@ const Profile: React.FC = () => {
           <button className="bg-green-500 text-white px-4 py-2 rounded">Signout</button>
         </div>
       </header>
-      
-      <div className="flex gap-8">
-        <main className="w-3/4">
+
+      <div className="flex flex-col lg:flex-row gap-8">
+        <main className="w-full lg:w-3/4">
           <div className="mb-8">
             <h2 className="text-xl font-semibold mb-4">Search Books</h2>
             <div className="flex">
-              <input type="text" placeholder="Odoo Development" className="flex-grow border p-2" />
-              <button className="bg-blue-500 text-white px-4 py-2">Search</button>
+              <input 
+                type="text" 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Odoo Development" 
+                className="flex-grow border p-2" 
+              />
+              <button onClick={handleSearch} className="bg-blue-500 text-white px-4 py-2">Search</button>
             </div>
           </div>
           
@@ -35,25 +60,29 @@ const Profile: React.FC = () => {
             </div>
           </div>
         </main>
-        
-        <aside className="w-1/4">
+
+        <aside className="w-full lg:w-1/4">
           <div className="bg-gray-100 p-4 mb-6 rounded">
             <h2 className="text-xl font-semibold mb-4">User Profile</h2>
-            <img src="profile-placeholder.jpg" alt="Profile" className="w-24 h-24 rounded-full object-cover mb-4" />
-            <h3 className="font-semibold">Mitchell Admin</h3>
-            <p className="text-sm">YourCompany</p>
-            <p className="text-sm">215 Vine St<br />Scranton PA 18503<br />United States</p>
-            <p className="text-sm">+1 555-555-5555</p>
-            <p className="text-sm mb-2">admin@yourcompany.example.com</p>
+            <Avatar
+              name={userName}
+              size={50}
+              variant="beam"
+              colors={['#A3A948', '#EDB92E', '#F85931', '#CE1836', '#009989']}
+            />
+            <h3 className="font-semibold">{userName}</h3>
+            <p className="text-sm">{userRole}</p> 
+            <p className="text-sm mb-2">{userEmail}</p> 
+            <p className="text-sm mb-2">{userId}</p> 
             <a href="#" className="text-blue-500">Edit information</a>
           </div>
-          
+
           <div className="bg-gray-100 p-4 rounded">
             <h2 className="text-xl font-semibold mb-4">Your contact</h2>
-            <p className="text-sm">Mitchell Admin</p>
-            <p className="text-sm">admin@yourcompany.example.com</p>
-            <p className="text-sm">+1 555-555-5555</p>
-            <p className="text-sm">Scranton</p>
+            <p className="text-sm">{userName}</p>
+            <p className="text-sm">{userEmail}</p>
+            <p className="text-sm">{userRole}</p>
+            <p className="text-sm">{userId}</p>
           </div>
         </aside>
       </div>
